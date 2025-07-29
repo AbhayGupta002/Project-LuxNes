@@ -1,0 +1,66 @@
+package com.example.demo.controller;
+
+import com.example.demo.dto.EmployeeDto;
+import com.example.demo.dto.ErrorDetails;
+import com.example.demo.dto.Response;
+import com.example.demo.dto.UserDto;
+import com.example.demo.entity.EmployeeDetails;
+import com.example.demo.entity.UserLogin;
+import com.example.demo.repository.EmployeeDetailsRepository;
+import com.example.demo.repository.UserLoginRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("employeelogin")
+public class EmployeeController {
+    @Autowired
+    private EmployeeDetailsRepository employeeDetailsRepository;
+
+    @Autowired
+    private UserLoginRepository userLoginRepository;
+
+    @PostMapping(value = "employeeregister")
+    public ResponseEntity<Response> employeeRegistration(@RequestBody EmployeeDto employeeDto){
+        Response response = new Response();
+        EmployeeDetails employeeDetails = new EmployeeDetails();
+
+        String empId = UUID.randomUUID().toString().concat("EMP");
+        employeeDetails.setEmployeeId(empId);
+        employeeDetails.setGmail(employeeDto.getGmail());
+        employeeDetails.setName(employeeDto.getName());
+        employeeDetails.setContactNumber(employeeDto.getContactNumber());
+
+        Optional<EmployeeDetails> existing = employeeDetailsRepository.findById(employeeDto.getGmail());
+        if (!existing.isPresent()){
+            ErrorDetails errorDetails = new ErrorDetails(HttpStatus.ALREADY_REPORTED,
+                    "mailId already exist:"+employeeDto.getGmail()+" use different Id");
+            response.setError(errorDetails);
+            return ResponseEntity.ofNullable(response);
+        }
+
+        employeeDetailsRepository.save(employeeDetails);
+
+        UserLogin login = new UserLogin();
+        login.setGmail(employeeDto.getGmail());
+        login.setPassword(employeeDto.getPassword());
+        userLoginRepository.save(login);
+
+        EmployeeDto dto = new EmployeeDto();
+        EmployeeDetails employee = new EmployeeDetails();
+        dto.setEmployeeId(employee.getEmployeeId());
+        dto.setName(employee.getName());
+        dto.setGmail(employee.getGmail());
+
+        response.setData(dto);
+        return ResponseEntity.ofNullable(response);
+    }
+}

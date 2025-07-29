@@ -1,25 +1,37 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "user_login")
 public class UserLogin {
     @Id
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    @Column(name = "gmail", nullable = false, unique = true)
+    private String gmail;
 
     @OneToOne
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "user_id")
     private UserDetails userDetails;
 
-    @Column(name = "password", nullable = false, unique = false)
+    @Column(name = "password")
     private String password;
+
+    @OneToOne
+    @JoinColumn(name = "hotel_id")
+    private HotelDetails hotelDetails;
+
+    @OneToOne
+    @JoinColumn(name = "employee_id")
+    private EmployeeDetails employeeDetails;
+
 }

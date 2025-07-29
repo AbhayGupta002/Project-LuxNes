@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @AllArgsConstructor
@@ -14,66 +15,45 @@ import lombok.NoArgsConstructor;
 @Table(name = "booking_details")
 public class BookingDetails {
 
-    @OneToOne
-    @JoinColumn(name = "registrationid")
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
     private HotelDetails hotelDetails;
 
-    @Column(name = "registration_number")
-    private Long registrationNo;
-
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "booking_id")
-    private Long bookingId;
+    private String bookingId;
 
-    @Column(name = "room_no")
-    private int roomNo;
+//    @Column(name = "hotel_id")
+//    private String hotelId;
 
-    @Column(name = "registered_location")
-    private Double registeredLocation;
+//    @Column(name = "user_id")
+//    private String userId;
 
-    @Column(name = "room_rent")
-    private int roomRent;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserDetails userDetails;
 
-    @Column(name = "type")
-    private String type;
+    @Column(name = "userid", unique = true, nullable = false)
+    private String userid;
 
-    @Column(name = "hotelname")
-    private String hotelName;
-
-    @Column(name = "city")
-    private String city;
-
-
-
-
-    @OneToOne
-    @JoinColumn(name = "userId")
-    private  UserDetails userDetails;
-
-    @Column(name = "userid", unique = true,nullable = false)
-    private Long userid;
-
-    @Column(name = "gmail", nullable = false)
-    private String gmail;
-
-    @Column(name = "contact_number", nullable = false)
-    private Long contactNumber;
-
-    @Column(name = "username", nullable = false)
-    private String name;
-
-    @Column(name = "payment", nullable = false)
+    @Column(name = "payment")
     private String paymentMode;
 
     @Column(name = "visitors", nullable = false)
-    private int totalVisitors;
+    private String totalGuest;
+
+    @Column(name = "room_no")
+    private String roomNo;
 
     @Column(name = "time_duration", nullable = false)
     private String time;
 
-    @Column(name = "boarding_time", nullable = false,updatable = false)
-    private String dateTime;
+    @Column(name = "bording_time", nullable = false, updatable = false)
+    private String bordingTime;
 
-    @Column(name = "leave_time", nullable = false,updatable = false)
+    @Column(name = "leave_time", nullable = false, updatable = false)
     private String leaveTime;
 
     @Column(name = "status", nullable = false, updatable = false)
